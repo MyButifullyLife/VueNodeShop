@@ -1,8 +1,11 @@
-import  axios from 'axios'
+import axios from 'axios'
+
 const instance = axios.create({
-  baseUrl:`http://${process.env.HOST || 'localhost'} :${process.env.PORT || 3000}`,
-  timeout:1000,
-  headers:{}
+  baseURL:`http://${process.env.HOST||'127.0.0.1'}:${process.env.PORT||3000}`,
+  timeout:2000,
+  headers:{
+
+  }
 })
 
-export  default  instance
+export default instance

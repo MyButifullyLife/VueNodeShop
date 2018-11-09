@@ -23,6 +23,17 @@ export default {
           return{
               user:''
           }
+      },
+       mounted(){
+          let _this = this;
+       this.$axios.$get('/users/getUser').then(function(res){
+           if(res){
+               _this.user = res.user
+           }else{
+               _this.user =''
+           }
+       })
+
       }
 }
 </script>
