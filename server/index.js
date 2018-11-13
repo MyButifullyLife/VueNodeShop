@@ -14,6 +14,7 @@ import passport from './interface/utils/passport'
 import users from './interface/users'
 import geo from './interface/geo'
 import search from './interface/search'
+import categroy from './interface/categroy'
 
 const app = new Koa()
 const host = process.env.HOST || '127.0.0.1'
@@ -22,7 +23,10 @@ const port = process.env.PORT || 3000
 
 app.keys=['mt','keyskeys']
 app.proxy=true;
-app.use(session({key: 'mt', prefix: 'mt:uid', store: new Redis()}))
+app.use(session({key: 'mt', prefix: 'mt:uid',  store: new Redis() ,cookie:{
+  expire:1000 * 60 *60*24*7,   // cookie保存时间
+  maxAge:1000 * 60 *60*24*7,    // cookie 保存时间优先级比 expire高
+}}))
 
 app.use(bodyParser({
   extendTypes:['json','from','text']
@@ -60,6 +64,7 @@ async function start() {
   app.use(users.routes()).use(users.allowedMethods())
   app.use(geo.routes()).use(geo.allowedMethods())
   app.use(search.routes()).use(search.allowedMethods())
+  app.use(categroy.routes()).use(categroy.allowedMethods())
 
 
   app.use(ctx => {

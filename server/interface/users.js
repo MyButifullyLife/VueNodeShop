@@ -10,11 +10,14 @@ let router = new Router({prefix: '/users'})
 
 let Store = new Redis().client
 
+
+
 router.post('/signup', async (ctx) => {
   const {username, password, email, code} = ctx.request.body;
 
   if (code) {
     const saveCode = await Store.hget(`nodemail:${username}`, 'code')
+    console.log('ko.saveCode',saveCode)
     const saveExpire = await Store.hget(`nodemail:${username}`, 'expire')
     if (code === saveCode) {
       if (new Date().getTime() - saveExpire > 0) {
@@ -36,11 +39,9 @@ router.post('/signup', async (ctx) => {
       msg: '请填写验证码'
     }
   }
-
-
   let user = await User.find({username})
-  console.log('nuser',user)
-  if (user.length || !username) {
+  console.log(user)
+  if (user.length) {
     ctx.body = {
       code: -1,
       msg: '已被注册'
@@ -71,7 +72,6 @@ router.post('/signup', async (ctx) => {
 })
 
 router.post('/signin', async (ctx, next) => {
-
   return Passport.authenticate('local', function(err, user, info, status) {
     if (err) {
       ctx.body = {
@@ -129,9 +129,11 @@ router.post('/verify', async (ctx, next) => {
     if (error) {
       return console.log(error)
     } else {
+      console.log('ko.code',ko.code)
       Store.hmset(`nodemail:${ko.user}`, 'code', ko.code, 'expire', ko.expire, 'email', ko.email)
     }
   })
+  console.log('ko.cod1111',333333)
   ctx.body = {
     code: 0,
     msg: '验证码已发送，可能会有延时，有效期1分钟'
